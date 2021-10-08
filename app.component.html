@@ -1,0 +1,456 @@
+<div class="control-section">
+  <div class="control-section">
+    <div class="grid-freezeprop">
+      <div class="grid-freezecol">
+        <div class="grid-freezecol">
+          <span> Column </span>
+        </div>
+        <div class="grid-freezecol">
+          <ejs-dropdownlist
+            id="column"
+            #columndropdown
+            index="7"
+            [dataSource]="columnData"
+            (change)="columnChange($event)"
+            [fields]="fields"
+          ></ejs-dropdownlist>
+        </div>
+      </div>
+      <div class="grid-freezecol">
+        <div class="grid-freezecol">
+          <span> Freeze Direction </span>
+        </div>
+        <div class="grid-freezecol">
+          <ejs-dropdownlist
+            id="direction"
+            #directiondropdown
+            index="0"
+            [dataSource]="directionData"
+            (change)="directionChange($event)"
+            [fields]="fields"
+          ></ejs-dropdownlist>
+        </div>
+      </div>
+    </div>
+
+    <ejs-treegrid
+      #treegrid
+      [dataSource]="data"
+      childMapping="subtasks"
+      height="350"
+      [treeColumnIndex]="1"
+      id="treegridcomp"
+      allowPaging="true"
+      [pageSettings]="pageSettings"
+      allowExcelExport="true"
+      allowPdfExport="true"
+      allowSorting="true"
+      [contextMenuItems]="contextMenuItems"
+      [editSettings]="editSettings"
+      [toolbar]="toolbar"
+      [showColumnChooser]="true"
+      allowSorting="true"
+      [sortSettings]="sortSettings"
+      (actionComplete)="sort($event)"
+      [allowRowDragAndDrop]="true"
+      [selectionSettings]="selectOptions"
+      allowFiltering="true"
+      [filterSettings]="filterSettings"
+      allowSelection="false"
+      [contextMenuItems]="contextMenus"
+      (contextMenuOpen)="contextMenuOpen($event)"
+      (contextMenuClick)="contextMenuClick($event)"
+      allowTextWrap="true"
+      allowReordering="true"
+    >
+      <e-columns>
+        <e-column
+          field="taskID"
+          headerText="Task ID"
+          isPrimaryKey="true"
+          width="80"
+          [edit]="editparams"
+          textAlign="Right"
+          editType="numericedit"
+          [validationRules]="taskidrules"
+          freeze="Left"
+        ></e-column>
+        <e-column
+          field="taskName"
+          headerText="Task N"
+          width="190"
+          [showInColumnChooser]="false"
+          [validationRules]="tasknamerules"
+        ></e-column>
+        <e-column
+          field="startDate"
+          headerText="Start Date"
+          width="90"
+          format="yMd"
+          textAlign="Right"
+          editType="datepickeredit"
+          [validationRules]="startdaterules"
+        ></e-column>
+        <e-column
+          field="endDate"
+          headerText="End Date"
+          width="90"
+          format="yMd"
+          textAlign="Right"
+          editType="datepickeredit"
+          [validationRules]="enddaterules"
+        ></e-column>
+        <e-column
+          field="duration"
+          headerText="Duration"
+          width="85"
+          [edit]="editparams"
+          textAlign="Right"
+          editType="numericedit"
+          [validationRules]="durationrules"
+        ></e-column>
+        <e-column
+          field="progress"
+          headerText="Progress"
+          width="90"
+          textAlign="Right"
+          [edit]="editparams"
+          editType="numericedit"
+          [validationRules]="progressrules"
+        ></e-column>
+        <e-column
+          field="priority"
+          headerText="Priority"
+          width="80"
+          textAlign="Left"
+          editType="stringedit"
+          [validationRules]="priorityrules"
+          freeze="Right"
+        ></e-column>
+      </e-columns>
+    </ejs-treegrid>
+  </div>
+</div>
+<br /><br />
+<ejs-dialog
+  #alertDialog
+  [buttons]="dlgButtons"
+  [header]="header"
+  [animationSettings]="animationSettings"
+  [content]="content"
+  [showCloseIcon]="showCloseIcon"
+  [target]="target"
+  [width]="width"
+  [visible]="visible"
+>
+</ejs-dialog>
+<!-- custom code start -->
+<style>
+  .grid-freezeprop {
+      padding-bottom: 5px;
+  }
+
+  .grid-freezecol {
+      display: inline-block;
+      padding-right: 10px;
+  }
+</style>
+<!-- custom code end -->
+<br /><br />
+<!-- Section for Multi Sort  -->
+<div class="col-lg-3 property-section">
+  <div class="property-panel-section">
+    <div class="property-panel-header"><b>MultiSort Section</b></div>
+    <table
+      id="property"
+      class="property-panel-table"
+      title="Properties"
+      style="width: 100%"
+    >
+      <tr>
+        <td style="width: 70%">
+          <div>Task ID</div>
+        </td>
+        <td style="width: 30%;padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #taskID
+              [checked]="true"
+              (change)="taskIDSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>Task Name</div>
+        </td>
+        <td style="width: 30%;padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #taskName
+              [checked]="true"
+              (change)="taskNameSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>Start Date</div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #startDate
+              (change)="startDateSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>End Date</div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #endDate
+              (change)="endDateSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>Duration</div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #duration
+              (change)="durationSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>Progress</div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #progress
+              (change)="progressSort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>Priority</div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox
+              #priority
+              (change)="prioritySort($event)"
+            ></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br /><br />
+<!-- Section for Filtering wrt to mode -->
+<div class="col-lg-3 property-section">
+  <div class="property-panel-section">
+    <div class="property-panel-header"><b>Mode Section for Filtering</b></div>
+    <table
+      id="property"
+      class="property-panel-table"
+      title="Properties"
+      style="width: 100%"
+    >
+      <tr style="height: 50px">
+        <td style="width: 50%">
+          <div style="width: 100px">Hierarchy Mode</div>
+        </td>
+        <td style="width: 50%">
+          <div>
+            <ejs-dropdownlist
+              #dropdown1
+              id="mode"
+              width="100px"
+              [dataSource]="d1data"
+              [fields]="fields1"
+              value="Parent"
+              (change)="modeChange($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br />
+<br />
+<!-- Section for selecting CRUD Operation row level or Cell Level  -->
+<div class="col-lg-3 property-section">
+  <div class="property-panel-section">
+    <div class="property-panel-header">
+      <b
+        >CRUD Operations Level (Perform on change event for enabling CRUD
+        operation at top)</b
+      >
+    </div>
+    <table
+      id="property"
+      class="property-panel-table"
+      title="Properties"
+      style="width: 100%"
+    >
+      <tr style="height: 50px">
+        <td style="width: 30%">
+          <div>Edit Mode</div>
+        </td>
+        <td style="width: 50%;padding-right: 10px">
+          <div id="columnddl">
+            <ejs-dropdownlist
+              id="ddlelement"
+              width="120px"
+              [dataSource]="cruddata"
+              [fields]="crudfields"
+              value="CellEditing"
+              (change)="onCrudDDChange($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br />
+<br />
+<!-- Multiselect Section  -->
+<div class="col-lg-3 property-section">
+  <div class="property-panel-section">
+    <div class="property-panel-header">
+      <b> Multiselect Functionality ( Cell and Row )</b>
+    </div>
+    <table
+      id="property"
+      class="property-panel-table"
+      title="Properties"
+      style="width: 100%"
+    >
+      <tr>
+        <td style="width: 30%">
+          <div style="padding-top: 7px">Selection Type</div>
+        </td>
+        <td style="width: 70%;padding-right: 10px">
+          <div>
+            <ejs-dropdownlist
+              #dropdownS
+              id="element1"
+              width="110px"
+              [dataSource]="d1data"
+              [fields]="fields1"
+              value="Multiple"
+              (change)="change1($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 30%">
+          <div>Selection Mode</div>
+        </td>
+        <td style="width: 70%">
+          <div style="padding-right: 10px;padding-bottom: 10px">
+            <ejs-dropdownlist
+              #dropdown2
+              id="element2"
+              width="110px"
+              [dataSource]="d2data"
+              [fields]="fields2"
+              value="Row"
+              (change)="change2($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+      <tr id="cellselection" style="display: none">
+        <td style="width: 30%;">
+          <div>Cell Selection Mode</div>
+        </td>
+        <td style="width: 70%;">
+          <div style="padding-right: 10px;padding-bottom: 10px">
+            <ejs-dropdownlist
+              #dropdown3
+              id="element3"
+              width="110px"
+              [dataSource]="dM3data"
+              [fields]="fields3"
+              value="Flow"
+              (change)="change3($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br />
+<br />
+<!-- Section for changing Data type ( Data Manipulation )  -->
+<div class="col-lg-3 property-section">
+  <div class="property-panel-section">
+    <div class="property-panel-header"><b>Data Formatting</b></div>
+    <table
+      id="property"
+      class="property-panel-table"
+      title="Properties"
+      style="width: 100%"
+    >
+      <tr style="height: 50px">
+        <td style="width: 20%">
+          <div style="padding-top: 10px">Column</div>
+        </td>
+        <td style="width: 80%;padding-right: 10px">
+          <div>
+            <ejs-dropdownlist
+              #dropdownM1
+              id="ddlelement"
+              width="120px"
+              [dataSource]="dM1data"
+              [fields]="ddlfields"
+              value="taskName"
+              (change)="onChange($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+      <tr style="height: 50px">
+        <td style="width: 30%">
+          <div>Format</div>
+        </td>
+        <td style="width: 70%;padding: 10px 10px 10px 0px">
+          <div>
+            <ejs-dropdownlist
+              #dropdownM2
+              id="element"
+              width="120px"
+              [dataSource]="dM2data"
+              [fields]="fieldsM"
+              value="n2"
+              (change)="change($event)"
+            ></ejs-dropdownlist>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
